@@ -1,32 +1,17 @@
 
+import { XMLParser } from "fast-xml-parser";
 import { CommandsRegistry, registerCommand, runCommand, } from "./commands/commands";
-import { handlerLogin, handlerRegister } from "./commands/users.js";
+import { handlerLogin, handlerRegister, handlerUsers } from "./commands/users.js";
+import { handlerReset } from "./commands/reset";
+import { handlerAgg } from "./commands/aggregate";
 
 import { readConfig } from "./config.js";
 import { db, } from "./lib/db/index.js";
 import { users } from "./lib/db/schema.js";
 
-async function handlerReset(cmdName: string, ...args: string[]) {
-    if (args.length > 0) {
-        throw new Error(`Usage: ${cmdName}`);
-    }
-    await db.delete(users);
-} 
 
-async function handlerUsers(cmdName: string, ...args: string[]) {
-    if (args.length !== 0) {
-        throw new Error(`Usage: ${cmdName}`);
-    }
-    const names = await db.select({name: users.name}).from(users);
-    const config = readConfig();
-    for (const user of names) {
-        if (config.currentUserName != user.name) {
-            console.log(user.name);
-        } else {
-            console.log(`${user.name} (current)`);
-        }
-    }
-}
+
+
 
 async function main() {
     // const result = await db.delete(users);
@@ -61,6 +46,8 @@ async function main() {
     registerCommand(registry, "register", handlerRegister);
     registerCommand(registry, "reset",  handlerReset);
     registerCommand(registry, "users", handlerUsers);
+    registerCommand(registry, "agg", handlerAgg);
+    
 
     try {
         await runCommand(registry, cmdName, ...argsForHandler);
