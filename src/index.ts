@@ -4,11 +4,12 @@ import { CommandsRegistry, registerCommand, runCommand, } from "./commands/comma
 import { handlerLogin, handlerRegister, handlerUsers } from "./commands/users.js";
 import { handlerReset } from "./commands/reset";
 import { handlerAgg } from "./commands/aggregate";
-import { handlerAddFeed } from "./commands/feed";
+import { handlerAddFeed, handlerFeeds } from "./commands/feed";
 
 import { readConfig } from "./config.js";
 import { db, } from "./lib/db/index.js";
 import { users } from "./lib/db/schema.js";
+import { register } from "module";
 
 
 
@@ -49,6 +50,7 @@ async function main() {
     registerCommand(registry, "users", handlerUsers);
     registerCommand(registry, "agg", handlerAgg);
     registerCommand(registry, "addfeed", handlerAddFeed);
+    registerCommand(registry, "feeds", handlerFeeds);
     
 
     try {

@@ -36,3 +36,7 @@ export function printFeed(feed: Feed, user: User) {
     }
     console.log("--------------------------");
 }
+
+export async function getFeeds() {
+    return db.select().from(feeds);
+}
