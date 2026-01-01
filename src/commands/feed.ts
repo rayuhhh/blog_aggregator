@@ -1,9 +1,13 @@
+import { db } from "src/lib/db";
 import { readConfig } from "../config";
-import { createFeed, printFeed, getFeeds } from "../lib/db/queries/feed";
+import { createFeed, /* printFeed, */ getFeeds } from "../lib/db/queries/feed";
 import { getUser, getUsers } from "../lib/db/queries/users"; 
+import { createFeedFollow } from "src/lib/db/queries/feed-follows";
+import { printFeedFollow } from "./feed-follows";
+
 
 export async function handlerAddFeed(cmdName: string, ...args: string[]) {
-    if (args.length < 2) {
+    if (args.length !== 2) {
         throw new Error(`Usage: ${cmdName} <name of feed> <url>`);
     }
     const config = readConfig();
@@ -13,7 +17,12 @@ export async function handlerAddFeed(cmdName: string, ...args: string[]) {
         throw new Error(`User: ${currUser} not found`);
     }
     const feed = await createFeed(args[0], args[1], user.id);
-    printFeed(feed, user);
+    if (!feed) {
+        throw new Error(`Failed to create feed`);
+    }
+
+    const feedFollow = await createFeedFollow(user.id, feed.id);
+    printFeedFollow(feed, user);
 }
 
 export async function handlerFeeds(_: string) {
@@ -28,5 +37,5 @@ export async function handlerFeeds(_: string) {
             console.log(`${user}`);
         }
     }
-
 }
+
