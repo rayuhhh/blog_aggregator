@@ -5,6 +5,8 @@ import { handlerLogin, handlerRegister, handlerUsers } from "./commands/users.js
 import { handlerReset } from "./commands/reset";
 import { handlerAgg } from "./commands/aggregate";
 import { handlerAddFeed, handlerFeeds } from "./commands/feed";
+import { handlerFollow, handlerListFeedFollows } from "./commands/feed-follows";
+import { middlewareLoggedIn } from "./middleware";
 
 import { readConfig } from "./config.js";
 import { db, } from "./lib/db/index.js";
@@ -49,8 +51,13 @@ async function main() {
     registerCommand(registry, "reset",  handlerReset);
     registerCommand(registry, "users", handlerUsers);
     registerCommand(registry, "agg", handlerAgg);
-    registerCommand(registry, "addfeed", handlerAddFeed);
+
+    registerCommand(registry, "addfeed", middlewareLoggedIn(handlerAddFeed));
+
     registerCommand(registry, "feeds", handlerFeeds);
+
+    registerCommand(registry, "follow", middlewareLoggedIn(handlerFollow));
+    registerCommand(registry, "following", middlewareLoggedIn(handlerListFeedFollows));
     
 
     try {
